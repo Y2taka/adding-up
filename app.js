@@ -11,7 +11,8 @@ rl.on('line', (lineString) => {     // 'line'というイベントが発生し�
     const popu = parseInt(columns[3]);
     if(year === 2010 || 2015){
         let value = prefectureDataMap.get(prefecture);
-        if(!value){
+        if(!value){ 
+            // もしこの県の処理が初めてであればオブジェクトを作る
             value = {
                 popu10: 0,
                 popu15: 0,
@@ -28,12 +29,15 @@ rl.on('line', (lineString) => {     // 'line'というイベントが発生し�
     }
 });
 rl.on('close', () => {
+    // 変化率を計算
     for(let [key, value] of prefectureDataMap){
         value.change = value.popu15 / value.popu10;
     }
+    // 変化率が大きい順にソート
     const rankingArray = Array.from(prefectureDataMap).sort((pair1, pair2) => {
         return pair2[1].change - pair1[1].change;
     })
+    // 出力用の文字列に整形
     const rankingStrings = rankingArray.map(([key, value]) => {
         return key + ': ' + value.popu10 + '=>' + value.popu15 + ' 変化率:' + value.change;
     });
